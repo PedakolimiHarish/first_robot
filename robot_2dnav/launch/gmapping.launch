@@ -1,0 +1,24 @@
+<launch>
+  <arg name="scan_topic"  default="/robot/laser/scan" />
+  <arg name="base_frame"  default="link_chassis"/>
+  <arg name="odom_frame"  default="odom"/>
+  
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"></node>
+
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="use_gui" value="False"/>
+  </node>
+  
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find robot_2dnav)/params/gmapping_rviz.rviz"></node>
+
+
+  <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
+
+    <param name="base_frame" value="$(arg base_frame)"/>
+    <param name="odom_frame" value="$(arg odom_frame)"/>
+    
+
+	<rosparam file ="$(find robot_2dnavs)/params/gmapping_params.yaml" command = "load"/>
+	<remap from="scan" to="$(arg scan_topic)"/>
+  </node>
+</launch>
